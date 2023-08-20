@@ -40,3 +40,23 @@ struct Token {
     size_t text_length;
     char *text;
 };
+
+char *ReadEntireFileIntoMemoryAndNullTerminate(char *filename) {
+    char *result = 0;
+
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        fseek(file, 0, SEEK_END);
+        size_t file_size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        result = (char *)malloc(file_size + 1);
+        fread(result, file_size, 1, file);
+        result[file_size] = 0;
+
+        fclose(file);
+    }
+
+    return result;
+}
+
