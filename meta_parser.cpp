@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define Assert(expression) if(!(expression)) {*(int *)0 = 0;}
+
 enum Token_Type {
     Token_Unknown,
 
@@ -11,7 +13,7 @@ enum Token_Type {
     Token_Colon,
     Token_Semicolon,
     Token_OpenBracket,
-    Token_CloseBracket,
+    Token_CloseBracker,
     Token_OpenBrace,
     Token_CloseBrace,
 
@@ -34,7 +36,7 @@ struct Memory_Arena {
     char *end;
 };
 
-Memory_Arena InitArena(size_t size) {
+Memory_Arena ArenaInit(size_t size) {
     Memory_Arena result;
     result.start   = (char *)malloc(size);
     result.current = result.start;
@@ -50,30 +52,46 @@ void *ArenaAlloc(Memory_Arena *arena, size_t size) {
         result          = arena->current;
         arena->current += size;
     } else {
-        printf("There's no room in the arena");
+        printf("There is not enough room  in the arena");
+        //Assert(1 == 0);
     }
 
     return result;
 }
 
+#define ZeroStruct(instance) ZeroSize(&instance, sizeof(instance))
+void ZeroSize(void *ptr, size_t size) {
+    char *byte = (char *)ptr;
+
+    while (size--) {
+        *byte++ = 0;
+    }
+}
+
+void ArenaFree(Memory_Arena *arena) {
+    free(arena->start);
+}
+
 char *ReadEntireFileIntoMemoryAndNullTerminate(Memory_Arena *arena, char *filename) {
     char *result = NULL;
-    FILE *file   = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
 
     if (file) {
         fseek(file, 0, SEEK_END);
         size_t file_size = ftell(file);
         fseek(file, 0, SEEK_SET);
 
-        result = (char *)ArenaAlloc(arena, file_size);
+        result = (char *)ArenaAlloc(arena, file_size + 1);
         fread(result, file_size, 1, file);
-        result[file_size] = 0;
+        result[file_size] = 0; // Don't forget to null terminate you doofus!
 
         fclose(file);
     }
 
     return result;
 }
+
+
 
 int main()
 {
