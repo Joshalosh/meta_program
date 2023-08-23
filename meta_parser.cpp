@@ -119,6 +119,7 @@ inline bool IsNumber(char c) {
     return result;
 }
 
+#if 0
 void EatWhiteSpace(char *loaded_file) {
     while(!IsAlpha(*loaded_file) {
         if (*loaded_file == " " || *loded_file = "\n" || *loaded_file = "\t") {
@@ -126,6 +127,7 @@ void EatWhiteSpace(char *loaded_file) {
         }
     }
 }
+#endif
 
 
 
