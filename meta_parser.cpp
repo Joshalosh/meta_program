@@ -53,7 +53,7 @@ void *ArenaAlloc(Memory_Arena *arena, size_t size) {
         arena->current += size;
     } else {
         printf("There is not enough room  in the arena");
-        //Assert(1 == 0);
+        Assert(1 == 0);
     }
 
     return result;
@@ -89,6 +89,43 @@ char *ReadEntireFileIntoMemoryAndNullTerminate(Memory_Arena *arena, char *filena
     }
 
     return result;
+}
+
+inline bool IsEndOfLine(char c) {
+    result = (c == '\n' ||
+              c == '\r');
+
+    return result;
+}
+
+inline bool IsWhitespace(char c) {
+    result = (c == ' ' ||
+              c == '\t' ||
+              c == '\v' ||
+              c == '\f' ||
+              IsEndOfLine(c));
+
+    return result;
+}
+
+inline bool IsAlpha(char c) {
+    result = ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+
+    return result;
+}
+
+inline bool IsNumber(char c) {
+    result = (c >= '0' && c <= '9');
+
+    return result;
+}
+
+void EatWhiteSpace(char *loaded_file) {
+    while(!IsAlpha(*loaded_file) {
+        if (*loaded_file == " " || *loded_file = "\n" || *loaded_file = "\t") {
+            loaded_file++;
+        }
+    }
 }
 
 
