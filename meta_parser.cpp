@@ -92,14 +92,13 @@ char *ReadEntireFileIntoMemoryAndNullTerminate(Memory_Arena *arena, char *filena
 }
 
 inline bool IsEndOfLine(char c) {
-    result = (c == '\n' ||
-              c == '\r');
+    result = (c == '\n' || c == '\r');
 
     return result;
 }
 
 inline bool IsWhitespace(char c) {
-    result = (c == ' ' ||
+    result = (c == ' '  ||
               c == '\t' ||
               c == '\v' ||
               c == '\f' ||
@@ -109,7 +108,7 @@ inline bool IsWhitespace(char c) {
 }
 
 inline bool IsAlpha(char c) {
-    result = ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+    result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 
     return result;
 }
