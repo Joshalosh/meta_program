@@ -128,28 +128,24 @@ void EatAllWhiteSpace(Token_Stream *tokeniser) {
         if (IsWhitespace(tokeniser->stream[0])) {
             tokeniser->stream++;
 
-        } else if (tokeniser->stream[0] == '/' && 
-                   tokeniser->stream[1] == '/') {
+        } else if (tokeniser->stream[0] == '/' && tokeniser->stream[1] == '/') {
             tokeniser->stream += 2;
 
             while (tokeniser->stream[0] && !IsEndOfLine(tokeniser->stream[0])) {
                 tokeniser->stream++;
             }
-        } else if (tokeniser->stream[0] == '/' && 
-                   tokeniser->stream[1] == '*') {
+
+        } else if (tokeniser->stream[0] == '/' && tokeniser->stream[1] == '*') {
             tokeniser->stream += 2;
 
-            while (tokeniser->stream[0] && 
-                   tokeniser->stream[1] && 
-                   (!(tokeniser->stream[0] == '*' && 
-                      tokeniser->stream[1] == '/'))) {
+            while (tokeniser->stream[0] && !(tokeniser->stream[0] == '*' && tokeniser->stream[1] == '/')) {
                 tokeniser->stream++;
             }
 
-            if (tokeniser->stream[0] == '*' &&
-                tokeniser->stream[1] == '/') {
+            if (tokeniser->stream[0] == '*' && tokeniser->stream[1] == '/') {
                 tokeniser->stream += 2;
             }
+
         } else {
             break;
         }
