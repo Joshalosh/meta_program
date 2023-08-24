@@ -119,15 +119,42 @@ inline bool IsNumber(char c) {
     return result;
 }
 
-#if 0
-void EatWhiteSpace(char *loaded_file) {
-    while(!IsAlpha(*loaded_file) {
-        if (*loaded_file == " " || *loded_file = "\n" || *loaded_file = "\t") {
-            loaded_file++;
+struct Token_Stream {
+    char *stream;
+};
+
+void EatAllWhiteSpace(Token_Stream *tokeniser) {
+    while (tokeniser->stream[0]) {
+        if (IsWhitespace(tokeniser->stream[0])) {
+            tokeniser->stream++;
+
+        } else if (tokeniser->stream[0] == '/' && 
+                   tokeniser->stream[1] == '/') {
+            tokeniser->stream += 2;
+
+            while (tokeniser->stream[0] && !IsEndOfLine(tokeniser->stream[0])) {
+                tokeniser->stream++;
+            }
+        } else if (tokeniser->stream[0] == '/' && 
+                   tokeniser->stream[1] == '*') {
+            tokeniser->stream += 2;
+
+            while (tokeniser->stream[0] && 
+                   tokeniser->stream[1] && 
+                   (!(tokeniser->stream[0] == '*' && 
+                      tokeniser->stream[1] == '/'))) {
+                tokeniser->stream++;
+            }
+
+            if (tokeniser->stream[0] == '*' &&
+                tokeniser->stream[1] == '/') {
+                tokeniser->stream += 2;
+            }
+        } else {
+            break;
         }
     }
 }
-#endif
 
 
 
