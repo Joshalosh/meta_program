@@ -152,7 +152,44 @@ void EatAllWhiteSpace(Token_Stream *tokeniser) {
     }
 }
 
+void GetToken(Token_Stream *tokeniser) {
+    EatAllWhiteSpace(tokeniser);
 
+    Token token; 
+
+    token.text = tokeniser->stream;
+    token.text_length = 1;
+
+    switch (token.text) {
+        case '(': token.type = Token_OpenParen;    break;
+        case ')': token.type = Token_CloseParen;   break;
+        case '*': token.type = Token_Asterisk;     break;
+        case ':': token.type = Token_Colon;        break;
+        case ';': token.type = Token_Semicolon;    break;
+        case '[': token.type = Token_OpenBracket;  break;
+        case ']': token.type = Token_CloseBracket; break;
+        case '{': token.type = Token_OpenBrace;    break;
+        case '}': token.type = Token_CloseBrace;   break;
+
+        case '"': {
+            token.type = Token_String;
+            token.text++;
+            char *text_end = token.text;
+            while (token.text != '"') {
+                text_end++;
+                token.text_length++
+            }
+            tokeniser->stream = ++text_end;
+        } break;
+    }
+    Token_Unknown,
+
+
+    Token_String,
+    Token_Identifier,
+
+    Token_EndOfStream,
+}
 
 int main()
 {
