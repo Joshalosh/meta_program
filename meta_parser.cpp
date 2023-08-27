@@ -156,9 +156,9 @@ Token GetToken(Token_Stream *tokeniser) {
     EatAllWhiteSpace(tokeniser);
 
     Token token; 
-
     token.text = tokeniser->stream;
     token.text_length = 1;
+    tokeniser->stream++;
 
     switch (token.text[0]) {
         case '(': token.type = Token_OpenParen;    break;
@@ -173,7 +173,7 @@ Token GetToken(Token_Stream *tokeniser) {
 
         case '"': {
             token.type = Token_String;
-            token.text++;
+            token.text = tokeniser->stream;
             while (*tokeniser->stream && *tokeniser->stream != '"') {
 
                 if (*tokeniser->stream && *tokeniser->stream == '\\') {
@@ -188,7 +188,7 @@ Token GetToken(Token_Stream *tokeniser) {
         } break;
 
         default: {
-            if (IsAlpha(*tokeniser->stream)) {
+            if (IsAlpha(*token.text)) {
                 token.type = Token_Identifier;
 
                 while (IsAlpha(*tokeniser->stream)  ||
@@ -212,6 +212,54 @@ Token GetToken(Token_Stream *tokeniser) {
     }
 
     return token;
+}
+
+static Token GetToken(Token_Stream *tokeniser) {
+    EatAllWhiteSpace(tokeniser);
+
+    Token token;
+    token.text_length = 1;
+    token.text = tokeniser->stream;
+    tokeniser->stream++;
+
+    switch (token.text[0]) {
+        case '\0': token.type = Token_EndOfStream;  break;
+
+        case '(': token.type  = Token_OpenParen;    break;
+        case ')': token.type  = Token_CloseParen;   break;
+        case '*': token.type  = Token_Asterisk;     break;
+        case ':': token.type  = Token_Colon;        break;
+        case ';': token.type  = Token_Semicolon;    break;
+        case '[': token.type  = Token_OpenBracket;  break;
+        case ']': token.type  = Token_CloseBracket; break;
+        case '{': token.type  = Token_OpenBrace;    break;
+        case '}': token.type  = Token_CloseBrace;   break;
+
+        case '"': {
+            token.text = tokeniser->stream;
+            while (tokeniser->stream[0] && tokeniser->stream != '"') {
+
+                if (tokeniser->stream[0] == '\') {
+                    tokeniser->stream++;
+                }
+                tokeniser->stram++;
+            }
+
+            token.text_length = tokeniser->stream - token.text;
+            if (tokeniser->stream[0] == '"') {
+                tokeniser->stream++;
+            }
+        } break;
+
+        default: {
+            if (IsAlpha(token.text[0])) {
+                token.type = Token_Identifier
+                
+            }
+
+        }
+
+    }
 }
 
 int main()
