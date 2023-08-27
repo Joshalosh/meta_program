@@ -13,7 +13,7 @@ enum Token_Type {
     Token_Colon,
     Token_Semicolon,
     Token_OpenBracket,
-    Token_CloseBracker,
+    Token_CloseBracket,
     Token_OpenBrace,
     Token_CloseBrace,
 
@@ -152,7 +152,7 @@ void EatAllWhiteSpace(Token_Stream *tokeniser) {
     }
 }
 
-void GetToken(Token_Stream *tokeniser) {
+Token GetToken(Token_Stream *tokeniser) {
     EatAllWhiteSpace(tokeniser);
 
     Token token; 
@@ -160,7 +160,7 @@ void GetToken(Token_Stream *tokeniser) {
     token.text = tokeniser->stream;
     token.text_length = 1;
 
-    switch (token.text) {
+    switch (token.text[0]) {
         case '(': token.type = Token_OpenParen;    break;
         case ')': token.type = Token_CloseParen;   break;
         case '*': token.type = Token_Asterisk;     break;
@@ -174,21 +174,44 @@ void GetToken(Token_Stream *tokeniser) {
         case '"': {
             token.type = Token_String;
             token.text++;
-            char *text_end = token.text;
-            while (token.text != '"') {
-                text_end++;
-                token.text_length++
+            while (*tokeniser->stream && *tokeniser->stream != '"') {
+
+                if (*tokeniser->stream && *tokeniser->stream == '\\') {
+                    tokeniser->stream++;
+                }
+                tokeniser->stream++;
             }
-            tokeniser->stream = ++text_end;
+            token.text_length = tokeniser->stream - token.text;
+            if (*tokeniser->stream == '"') {
+                tokeniser->stream++;
+            }
+        } break;
+
+        default: {
+            if (IsAlpha(*tokeniser->stream)) {
+                token.type = Token_Identifier;
+
+                while (IsAlpha(*tokeniser->stream)  ||
+                       IsNumber(*tokeniser->stream) ||
+                       *tokeniser->stream == '_') {
+                    tokeniser->stream++;
+                }
+
+                token.text_length = tokeniser->stream - token.text;
+
+#if 0
+            } else if (IsNumber(*tokeniser->stream)) {
+                ParseNumber();
+            }
+#endif
+
+            } else {
+                token.type = Token_Unknown;
+            }
         } break;
     }
-    Token_Unknown,
 
-
-    Token_String,
-    Token_Identifier,
-
-    Token_EndOfStream,
+    return token;
 }
 
 int main()
