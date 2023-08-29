@@ -152,6 +152,7 @@ void EatAllWhiteSpace(Token_Stream *tokeniser) {
     }
 }
 
+#if 0
 Token GetToken(Token_Stream *tokeniser) {
     EatAllWhiteSpace(tokeniser);
 
@@ -213,6 +214,7 @@ Token GetToken(Token_Stream *tokeniser) {
 
     return token;
 }
+#endif
 
 static Token GetToken(Token_Stream *tokeniser) {
     EatAllWhiteSpace(tokeniser);
@@ -237,12 +239,11 @@ static Token GetToken(Token_Stream *tokeniser) {
 
         case '"': {
             token.text = tokeniser->stream;
-            while (tokeniser->stream[0] && tokeniser->stream != '"') {
-
-                if (tokeniser->stream[0] == '\') {
+            while (tokeniser->stream[0] && tokeniser->stream[0] != '"') {
+                if (tokeniser->stream[0] == '\\') {
                     tokeniser->stream++;
                 }
-                tokeniser->stram++;
+                tokeniser->stream++;
             }
 
             token.text_length = tokeniser->stream - token.text;
@@ -253,13 +254,29 @@ static Token GetToken(Token_Stream *tokeniser) {
 
         default: {
             if (IsAlpha(token.text[0])) {
-                token.type = Token_Identifier
-                
+                token.type = Token_Identifier;
+
+                while(IsAlpha(tokeniser->stream[0])  ||
+                      IsNumber(tokeniser->stream[0]) ||
+                      tokeniser->stream[0] == '_')
+                {
+                    tokeniser->stream++;
+                }
+
+                token.text_length = tokeniser->stream - token.text;
+
+#if 0
+            } else if (IsNumnber(tokeniser->stream)) {
+                ParseNumber();
             }
-
-        }
-
+#endif
+            } else {
+                token.type = Token_Unknown;
+            }
+        } break;
     }
+
+    return token;
 }
 
 int main()
