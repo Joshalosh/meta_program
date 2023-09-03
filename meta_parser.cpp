@@ -36,7 +36,7 @@ struct Memory_Arena {
     char *end;
 };
 
-Memory_Arena ArenaInit(size_t size) {
+static Memory_Arena ArenaInit(size_t size) {
     Memory_Arena result;
     result.start   = (char *)malloc(size);
     result.current = result.start;
@@ -45,7 +45,7 @@ Memory_Arena ArenaInit(size_t size) {
     return result;
 }
 
-void *ArenaAlloc(Memory_Arena *arena, size_t size) {
+static void *ArenaAlloc(Memory_Arena *arena, size_t size) {
     void *result = NULL;
 
     if (arena->current + size <= arena->end) {
@@ -60,7 +60,7 @@ void *ArenaAlloc(Memory_Arena *arena, size_t size) {
 }
 
 #define ZeroStruct(instance) ZeroSize(&instance, sizeof(instance))
-void ZeroSize(void *ptr, size_t size) {
+static void ZeroSize(void *ptr, size_t size) {
     char *byte = (char *)ptr;
 
     while (size--) {
@@ -68,11 +68,11 @@ void ZeroSize(void *ptr, size_t size) {
     }
 }
 
-void ArenaFree(Memory_Arena *arena) {
+static void ArenaFree(Memory_Arena *arena) {
     free(arena->start);
 }
 
-char *ReadEntireFileIntoMemoryAndNullTerminate(Memory_Arena *arena, char *filename) {
+static char *ReadEntireFileIntoMemoryAndNullTerminate(Memory_Arena *arena, char *filename) {
     char *result = NULL;
     FILE *file = fopen(filename, "r");
 
@@ -123,7 +123,7 @@ struct Token_Stream {
     char *stream;
 };
 
-void EatAllWhiteSpace(Token_Stream *tokeniser) {
+static void EatAllWhiteSpace(Token_Stream *tokeniser) {
     while (tokeniser->stream[0]) {
         if (IsWhitespace(tokeniser->stream[0])) {
             tokeniser->stream++;
@@ -278,6 +278,14 @@ static Token GetToken(Token_Stream *tokeniser) {
 
     return token;
 }
+
+inline bool RequireToken(Token_Stream *tokeniser, Token_Type desired_type) {
+    Token token = GetToken(tokeniser);
+    bool result = (token.type == desired_type);
+
+    return result;
+}
+
 
 int main()
 {
